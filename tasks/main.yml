@@ -1,0 +1,49 @@
+---
+
+- name: Install packages
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: yes
+    autoremove: yes
+    update_cache: yes
+    cache_valid_time: 3600
+  vars:
+    packages:
+    - curl
+    - jq
+    - unzip
+
+- name: extract latest version number
+  block:
+
+  - name: fetch latest consul version
+    shell: curl -s https://checkpoint-api.hashicorp.com/v1/check/consul | jq -r -M '.current_version'
+    args:
+      executable: /bin/bash
+    register: latest_consul_version
+
+  - name: set consul_version
+    set_fact:
+      consul_version: "{{ latest_consul_version.stdout }}"
+
+  when: consul_version == "latest"
+
+- name: Check consul version
+  shell: "consul --version 2>&1 | grep {{ consul_version }}"
+  failed_when: false
+  changed_when: false
+  register: consul_versions_match
+
+- include: download.yml
+  when: consul_versions_match.rc != 0
+
+- name: Unarchive Consul archive
+  unarchive:
+    src: /tmp/consul-{{ consul_version }}.zip
+    dest: "/usr/local/bin"
+    copy: no
+  when: consul_versions_match.rc != 0
+
+...

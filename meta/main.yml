@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  role_name: consul
+  author: andrelohmann
+  description: ansible galaxy role to install consul
+  company: smartformer UG
+
+  license: MIT
+
+  min_ansible_version: 2.7
+
+  platforms:
+    - name: Ubuntu
+      versions:
+      - xenial
+      - bionic
+      - focal
+
+  galaxy_tags:
+  - consul
+...

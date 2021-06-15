@@ -1,0 +1,15 @@
+---
+
+- name: Download consul archive Linux 32 bits
+  get_url:
+    url: https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_386.zip
+    dest: /tmp/consul-{{ consul_version }}.zip
+  when: "'32' in ansible_architecture and 'Linux' == ansible_system"
+
+- name: Download consul archive Linux 64 bits
+  get_url:
+    url: https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip
+    dest: /tmp/consul-{{consul_version}}.zip
+  when: "'64' in ansible_architecture and 'Linux' == ansible_system"
+
+...
